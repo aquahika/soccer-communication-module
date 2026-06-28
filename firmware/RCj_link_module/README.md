@@ -63,13 +63,13 @@ Install esptool with `pip install esptool`. Building from source instead? See
 Do this once per pair of modules:
 
 1. Place the two modules **right next to each other** (they only pair at close range).
-2. On **each** module, **hold Button 2 (B2) + Button 3 (B3) together for 5 seconds**. The OLED
-   shows `Pairing…`.
+2. On **each** module, **hold the two small buttons marked `1` and `2` (on the board) together
+   for 5 seconds**. The OLED shows `Pairing…`.
 3. When they find each other, both **beep for 0.5 s** and show the **same 4-digit number** —
    that confirms they're paired to each other.
 
 Pairing is **remembered**: after a power cycle the two modules **reconnect automatically**. To
-re-pair a module with a different partner, just repeat the 5 s B2+B3 hold — it replaces the old
+re-pair a module with a different partner, just repeat the 5 s `1`+`2` hold — it replaces the old
 partner.
 
 > Pairing only completes at close range, on purpose, so you don't accidentally pair with another
@@ -126,27 +126,27 @@ LINKED                 -32dBm     <- connection status + signal strength
 
 **Buzzer:** short beep when pairing succeeds.
 
-**Buttons:**
+**Buttons** (referred to by the numbers printed on the board):
 
 | Button | Action |
 |--------|--------|
-| **B1** | send a test packet to the partner (quick way to check the link) |
-| **B2 + B3** (hold 5 s) | pair with a nearby module |
+| **the large button** | send a test packet to the partner (quick way to check the link) |
+| **`1` + `2`** (the two small buttons, hold 5 s) | pair with a nearby module |
 
 ---
 
 ## Checking the link
 
-Press **B1** on one module: its red LED blinks (sent) and the partner's blue LED blinks
-(received), and the partner's **RX** counter goes up. If `LINKED` shows on both OLEDs and B1
-moves the counters, the link is healthy.
+Press **the large button** on one module: its red LED blinks (sent) and the partner's blue LED
+blinks (received), and the partner's **RX** counter goes up. If `LINKED` shows on both OLEDs and
+the large button moves the counters, the link is healthy.
 
 ---
 
 ## Troubleshooting
 
-- **They won't pair** — bring the two modules closer together and make sure you hold **B2+B3
-  together** for the full 5 seconds on **both** modules at the same time.
+- **They won't pair** — bring the two modules closer together and make sure you hold buttons
+  **`1` + `2` together** for the full 5 seconds on **both** modules at the same time.
 - **Paired but no data** — check that `TX0`/`RX0` aren't swapped, `GND` is shared, and both the
   robot and module use **115200 8N1**. Watch the TX/RX counters and the red/blue LEDs to see
   which direction is moving.
