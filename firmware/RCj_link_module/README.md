@@ -19,21 +19,41 @@ No configuration, addresses, or apps required.
 **If you received pre-flashed modules:** nothing to install — skip to
 [Pair the two modules](#2-pair-the-two-modules).
 
-**Otherwise, flash the prebuilt binary** to each module over USB-C:
+**Otherwise, download the prebuilt binary and flash it to each module.** First get the latest
+merged binary from the
+**[Releases page](https://github.com/aquahika/soccer-communication-module/releases/latest)** —
+e.g.
+[`RCj_link_module-v1.0-merged.bin`](https://github.com/aquahika/soccer-communication-module/releases/download/link-fw-v1.0/RCj_link_module-v1.0-merged.bin).
+Then use **either** method below. Flash the **same** binary to **both** modules.
 
-1. Download the latest merged binary from the
-   **[Releases page](https://github.com/aquahika/soccer-communication-module/releases/latest)** —
-   e.g.
-   [`RCj_link_module-v1.0-merged.bin`](https://github.com/aquahika/soccer-communication-module/releases/download/link-fw-v1.0/RCj_link_module-v1.0-merged.bin).
-2. Flash it with [esptool](https://docs.espressif.com/projects/esptool/) (`pip install esptool`):
+> A full flash erases the module, including any saved pairing — just re-pair afterwards.
 
-   ```sh
-   esptool --chip esp32c5 -p <PORT> --before default_reset --after hard_reset write_flash 0x0 RCj_link_module-v1.0-merged.bin
-   ```
+### Easiest — flash from your browser (no install)
+
+Use **desktop Chrome or Edge** (they support Web Serial) with the
+**[ESP Terminator](https://espterminator.com/)** web flasher:
+
+1. Plug the module into the computer with a USB-C cable, and open **https://espterminator.com/**.
+2. **Device Type:** leave on **Auto** (or pick **ESP32**). Leave **“No Reset”** *unchecked*.
+3. Under **Serial Connection**, click **Select Device** and choose the module's serial port in
+   the browser popup.
+4. Under **Firmware Files**, turn on **Advanced Mode**, select the downloaded
+   `RCj_link_module-…-merged.bin`, and set the flash offset to **`0x0`**.
+5. Click **Flash Firmware** and wait for it to finish.
+6. Repeat for the second module.
+
+> If the device isn't detected, try a different USB-C cable/port, or put the module in bootloader
+> mode manually (hold **BOOT**, tap **RESET**, release **BOOT**) and tick **“No Reset”** before
+> flashing.
+
+### Alternative — command line (esptool)
+
+```sh
+esptool --chip esp32c5 -p <PORT> --before default_reset --after hard_reset write_flash 0x0 RCj_link_module-v1.0-merged.bin
+```
 
 `<PORT>` is e.g. `/dev/cu.usbmodemXXXX` (macOS), `/dev/ttyACM0` (Linux), or `COMx` (Windows).
-Flash the **same** binary to **both** modules. (A full flash erases the module, including any
-saved pairing — just re-pair afterwards.) Building from source instead? See
+Install esptool with `pip install esptool`. Building from source instead? See
 [For developers](#for-developers).
 
 ---
