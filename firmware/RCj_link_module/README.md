@@ -1,67 +1,65 @@
-# RCJ Link Module — Wireless UART Bridge Firmware
+# RCJ Link Module — Wireless UART Bridge
 
 Firmware that turns **two** RCJ Soccer communication modules (V7 / 2026, ESP32-C5) into a
-**transparent wireless UART link** between two robots. Each robot connects to its module over a
-plain UART; whatever one robot sends is delivered out the other module's UART, and vice-versa —
-the wireless hop between the two modules uses **ESP-NOW**.
+**transparent wireless link** between two robots. Each robot connects to its module over a plain
+UART; whatever one robot sends comes out the other module's UART, and vice-versa. The hop between
+the two modules is wireless (ESP-NOW) — think of it as a **wireless serial cable**.
 
 ```
-Robot A ──UART── Module A ))) ESP-NOW ((( Module B ──UART── Robot B
+Robot A ──UART── Module A ))) wireless ((( Module B ──UART── Robot B
 ```
 
-> This is a separate, self-contained firmware (not the referee-app firmware). For the full
-> design/reference, see [`../../docs/LINK_MODULE_SPECIFICATION.md`](../../docs/LINK_MODULE_SPECIFICATION.md).
+You use the two modules **as a pair**: pair them once, wire each to a robot, and send data.
+No configuration, addresses, or apps required.
 
 ---
 
-## What you need
+## 1. Get the modules ready
 
-- **Two** V7 / 2026 modules (ESP32-C5).
-- A USB-C cable to flash each one.
-- [ESP-IDF **v5.5.4**](https://docs.espressif.com/projects/esp-idf/en/v5.5.4/esp32c5/get-started/index.html)
-  installed (Arduino is pulled in automatically as a component).
+**If you received pre-flashed modules:** nothing to install — skip to
+[Pair the two modules](#2-pair-the-two-modules).
 
----
+**Otherwise, flash the prebuilt binary** to each module over USB-C:
 
-## 1. Build & flash (both modules)
+1. Download the latest merged binary from the
+   **[Releases page](https://github.com/aquahika/soccer-communication-module/releases/latest)** —
+   e.g.
+   [`RCj_link_module-v1.0-merged.bin`](https://github.com/aquahika/soccer-communication-module/releases/download/link-fw-v1.0/RCj_link_module-v1.0-merged.bin).
+2. Flash it with [esptool](https://docs.espressif.com/projects/esptool/) (`pip install esptool`):
 
-Flash the **same firmware** to both modules.
-
-```sh
-cd firmware/RCj_link_module
-idf.py set-target esp32c5      # first time only
-idf.py build
-
-# flash module 1, then swap the USB-C cable / port and flash module 2
-idf.py -p <PORT> flash
-```
+   ```sh
+   esptool --chip esp32c5 -p <PORT> --before default_reset --after hard_reset write_flash 0x0 RCj_link_module-v1.0-merged.bin
+   ```
 
 `<PORT>` is e.g. `/dev/cu.usbmodemXXXX` (macOS), `/dev/ttyACM0` (Linux), or `COMx` (Windows).
-Flashing is over USB-C and never conflicts with the robot UART (that's on the U3 header).
+Flash the **same** binary to **both** modules. (A full flash erases the module, including any
+saved pairing — just re-pair afterwards.) Building from source instead? See
+[For developers](#for-developers).
 
 ---
 
 ## 2. Pair the two modules
 
-1. Place the two modules **right next to each other** (pairing requires close proximity).
-2. On **each** module, **press and hold Button 2 (B2) + Button 3 (B3) together for 5 seconds**.
-   The OLED shows `Pairing…`.
+Do this once per pair of modules:
+
+1. Place the two modules **right next to each other** (they only pair at close range).
+2. On **each** module, **hold Button 2 (B2) + Button 3 (B3) together for 5 seconds**. The OLED
+   shows `Pairing…`.
 3. When they find each other, both **beep for 0.5 s** and show the **same 4-digit number** —
-   that's the pairing confirmation.
+   that confirms they're paired to each other.
 
-The pairing is **saved**: after a power cycle the two modules **reconnect automatically** (no
-need to pair again). To pair with a *different* module, just repeat the 5 s B2+B3 hold — it
-overwrites the previous partner.
+Pairing is **remembered**: after a power cycle the two modules **reconnect automatically**. To
+re-pair a module with a different partner, just repeat the 5 s B2+B3 hold — it replaces the old
+partner.
 
-> **Proximity:** pairing only completes when the partner's signal is strong enough
-> (`PAIR_RSSI_MIN`, default **−30 dBm** ≈ touching distance). This prevents pairing with the
-> wrong module across the field. See [Tuning](#tuning) to change it.
+> Pairing only completes at close range, on purpose, so you don't accidentally pair with another
+> team's module across the field.
 
 ---
 
 ## 3. Wire each module to its robot
 
-Connect the robot to the module's **UART0** on the **U3 header**:
+Connect the robot to the module's **UART** on the **U3 header**:
 
 | Module (U3) | Robot |
 |-------------|-------|
@@ -69,21 +67,19 @@ Connect the robot to the module's **UART0** on the **U3 header**:
 | `RX0` | robot TX |
 | `GND` | robot GND |
 
-- Baud rate: **115200 8N1** (`BRIDGE_UART_BAUD`).
-- Logic level is **3.3 V** — add a level shifter for a 5 V robot input. Always share **GND**.
+- Serial settings: **115200 baud, 8N1**.
+- The module's logic level is **3.3 V** — add a level shifter for a 5 V robot input, and always
+  share **GND**.
 - Power the module as usual (robot battery on VIN, or USB-C). See the
-  [main README](../../README.md) for power details.
+  [main README](../../README.md) for power and mounting.
 
 ---
 
-## 4. Use it
+## 4. Send data
 
-Once paired and wired, it's automatic: **any bytes your robot writes to the UART are delivered
-to the other robot's UART**, both directions, continuously. There is no addressing or framing to
-manage — treat it like a wireless serial cable between the two robots.
-
-- Maximum ~200 bytes are sent per radio packet; longer bursts are split automatically.
-- Send whatever protocol you like (text, your own binary format, etc.).
+Once paired and wired, it just works: **bytes your robot writes to the UART arrive at the other
+robot's UART**, both directions, continuously. Use any format you like (text or your own binary
+protocol). Longer messages are split across radio packets automatically.
 
 ---
 
@@ -92,93 +88,65 @@ manage — treat it like a wireless serial cable between the two robots.
 **OLED (when paired):**
 
 ```
-LINKED                 -32dBm     <- connection status + live signal strength
-        6 1 2 2                   <- the shared 4-digit pairing code
+LINKED                 -32dBm     <- connection status + signal strength
+        6 1 2 2                   <- the shared 4-digit pairing number
    TX:1280   RX:960               <- total bytes sent / received
 ```
 
 - `LINKED` / `NO LINK` — whether the partner is currently reachable.
-- RSSI (dBm) — link signal strength (closer to 0 = stronger).
-- TX / RX — running byte counters for traffic to / from the partner.
+- RSSI (dBm) — signal strength (closer to 0 = stronger).
+- TX / RX — running totals of bytes sent to / received from the partner.
 
-**RGB LED** (dim, ~30% brightness):
+**RGB LED** (soft glow):
 
 | LED | Meaning |
 |-----|---------|
-| 🔴 Red flash | a packet was **sent** (TX) |
-| 🔵 Blue flash | a packet was **received** (RX) |
-| 🟢 Green | unused (off) |
+| 🔴 Red blink | data **sent** |
+| 🔵 Blue blink | data **received** |
 
-**Buzzer:** 0.5 s beep on successful pairing.
+**Buzzer:** short beep when pairing succeeds.
 
 **Buttons:**
 
 | Button | Action |
 |--------|--------|
-| **B1** | send a test packet to the partner (handy to check the link) |
-| **B2 + B3** (hold 5 s) | enter pairing mode |
+| **B1** | send a test packet to the partner (quick way to check the link) |
+| **B2 + B3** (hold 5 s) | pair with a nearby module |
 
 ---
 
-## Tuning
+## Checking the link
 
-Common settings live at the top of [`definitions.h`](definitions.h):
-
-| Constant | Default | Meaning |
-|----------|---------|---------|
-| `BRIDGE_UART_BAUD` | `115200` | robot UART baud rate |
-| `PAIR_RSSI_MIN` | `-30` | pairing proximity threshold (dBm; lower = allow farther) |
-| `PAIRING_HOLD_TIME` | `5000` | B2+B3 hold time to start pairing (ms) |
-| `ESPNOW_WIFI_CHANNEL` | `1` | shared 2.4 GHz channel (must match on both) |
-| `LED_BRIGHTNESS_PCT` | `30` | activity-LED brightness (%) |
-| `ENABLE_USB_TEST_CONSOLE` | `1` | USB test console on/off |
-
-After changing any constant, **rebuild and reflash both modules**.
-
----
-
-## Bench testing over USB (optional)
-
-With `ENABLE_USB_TEST_CONSOLE = 1`, each module exposes a line-based console on its **USB-C**
-port (separate from the robot UART), so you can drive and observe it from a PC without wiring a
-robot. Open the port at any baud (e.g. `screen /dev/cu.usbmodemXXXX 115200`) and type:
-
-| Command | Effect |
-|---------|--------|
-| `PAIR` | enter pairing mode (same as the B2+B3 hold) |
-| `SEND <text>` | send `<text>` to the partner (as if the robot sent it on UART) |
-| `TEST` | send the fixed test packet (same as the B1 button) |
-| `STATUS` | print state, 4-digit code, partner MAC, link-alive, RSSI, TX/RX bytes |
-| `HELP` | list commands |
-
-The console also prints `RX <text>` for every packet received from the partner. Set
-`ENABLE_USB_TEST_CONSOLE 0` for a production build.
+Press **B1** on one module: its red LED blinks (sent) and the partner's blue LED blinks
+(received), and the partner's **RX** counter goes up. If `LINKED` shows on both OLEDs and B1
+moves the counters, the link is healthy.
 
 ---
 
 ## Troubleshooting
 
-- **Won't pair** — move the modules closer (proximity threshold is strict by default), and make
-  sure you hold **B2+B3 together** for the full 5 s on **both** modules. Lower `PAIR_RSSI_MIN`
-  to allow pairing from farther away.
-- **Paired but no data** — check `TX0/RX0` aren't swapped, GND is shared, and both sides use
-  **115200 8N1**. Watch the TX/RX counters and the red/blue LEDs to see which direction moves.
-- **`NO LINK` on the OLED** — the partner is out of range or powered off; it recovers
-  automatically when the partner is back.
-- **Flashing fails** — the robot UART is on the U3 header, not USB, so USB flashing should
-  always work; if needed, hold BOOT and tap RESET to force the bootloader.
+- **They won't pair** — bring the two modules closer together and make sure you hold **B2+B3
+  together** for the full 5 seconds on **both** modules at the same time.
+- **Paired but no data** — check that `TX0`/`RX0` aren't swapped, `GND` is shared, and both the
+  robot and module use **115200 8N1**. Watch the TX/RX counters and the red/blue LEDs to see
+  which direction is moving.
+- **OLED shows `NO LINK`** — the partner is out of range or powered off; it reconnects on its own
+  when the partner is back.
 
 ---
 
-## Layout
+## For developers
 
-| File | Role |
-|------|------|
-| `espnow_link.*` | ESP-NOW transport (Wi-Fi STA, packets, RX queue) |
-| `pairing.*` | pairing handshake, NVS persistence, link state, RSSI |
-| `bridge.*` | UART0 ⇄ ESP-NOW data path + test packet |
-| `monitor.*` | TX/RX counters and activity LEDs |
-| `buttons.*` / `buzzer.*` / `display.*` | inputs, beeper, OLED |
-| `usbtest.*` | USB bench-test console |
-| `definitions.h` | pins and all tunables |
-| `main/app_main.cpp`, `RCj_link_module.ino` | ESP-IDF / Arduino entry points |
+This is a self-contained ESP-IDF project (Arduino as a component), target `esp32c5`. Defaults
+(UART baud, pairing range, radio channel, LED brightness, …) are compiled in from
+[`definitions.h`](definitions.h); end users are not expected to change them.
+
+```sh
+cd firmware/RCj_link_module
+idf.py set-target esp32c5
+idf.py build
+idf.py -p <PORT> flash
+```
+
+Full design, protocol, tunables, and a USB bench-test console are documented in
+[`../../docs/LINK_MODULE_SPECIFICATION.md`](../../docs/LINK_MODULE_SPECIFICATION.md).
