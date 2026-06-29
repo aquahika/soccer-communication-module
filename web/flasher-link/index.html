@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RCJ Link Module Flasher</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="tool">
+        <div class="copy">
+          <p class="eyebrow">Firmware flasher</p>
+          <h1>RCJ Link Module</h1>
+          <p class="status">
+            Latest firmware:
+            <strong id="firmware-version">loading...</strong>
+          </p>
+          <div class="installer">
+            <button id="install-button" class="install-button" type="button">Install firmware</button>
+            <span class="erase-note">Flash memory will be fully erased first.</span>
+          </div>
+          <div class="flash-panel" aria-live="polite">
+            <div class="progress-row">
+              <span id="flash-status">Ready</span>
+              <span id="flash-percent">0%</span>
+            </div>
+            <progress id="flash-progress" value="0" max="100"></progress>
+            <pre id="flash-log" class="flash-log" aria-label="Flash log"></pre>
+          </div>
+          <p class="note">
+            Desktop Chrome or Edge is required. Connect the module over USB-C before starting.
+            Flash <strong>both</strong> modules, then pair them (hold buttons 1 + 2 for 5 s on each).
+          </p>
+          <a id="release-link" class="release-link" href="#" hidden>Open GitHub release</a>
+        </div>
+      </section>
+
+      <section class="details" aria-label="Firmware details">
+        <div>
+          <span>Target</span>
+          <strong id="chip-family">ESP32-C5</strong>
+        </div>
+        <div>
+          <span>Image</span>
+          <strong id="firmware-size">loading...</strong>
+        </div>
+        <div>
+          <span>Checksum</span>
+          <strong id="firmware-hash">loading...</strong>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

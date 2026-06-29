@@ -1,0 +1,18 @@
+{
+  "name": "RCJ Link Module",
+  "version": "1.0",
+  "new_install_prompt_erase": true,
+  "flashSettings": {
+    "flashMode": "dio",
+    "flashFreq": "80m",
+    "flashSize": "8MB"
+  },
+  "builds": [
+    {
+      "chipFamily": "ESP32-C5",
+      "parts": [
+        { "path": "RCj_link_module-v1.0-merged.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
