@@ -51,7 +51,7 @@ static void draw_unpaired()
     display.setFont(ArialMT_Plain_10);
     display.setTextAlignment(TEXT_ALIGN_CENTER);
     display.drawString(64, 8, "Not paired");
-    display.drawString(64, 36, "Hold B2 + B3 (5s)\nto pair");
+    display.drawString(64, 36, "Hold Button 1 and 2\n(5s) to pair");
     display.display();
 }
 
