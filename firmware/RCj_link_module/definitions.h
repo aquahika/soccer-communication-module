@@ -4,6 +4,7 @@
 #define FW_VERSION_MAJOR    1
 #define FW_VERSION_MINOR    0
 #define FW_VERSION          (FW_VERSION_MAJOR*0xFF + FW_VERSION_MINOR)
+#define FW_VERSION_STRING   "uartlink-v1.0"   // shown on the boot screen / release label
 
 /*** GPIOs (ESP32-C5, V7/2026 board) ***/
 // I2C OLED

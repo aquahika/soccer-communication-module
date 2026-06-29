@@ -1,7 +1,7 @@
-# RCJ Soccer Module — Wireless UART-Bridge Firmware (Link Module) Specification
+# RCJ UART Link Module — Wireless UART-Bridge Firmware Specification
 
 **Firmware project:** `firmware/RCj_link_module/`
-**Firmware version:** 1.0 (`FW_VERSION_MAJOR.FW_VERSION_MINOR` in `definitions.h`)
+**Firmware version:** `uartlink-v1.0` (`FW_VERSION_STRING` in `definitions.h`)
 **Board:** V7 / 2026 (ESP32-C5) — same hardware as the referee module
 **Last updated:** 2026-06-29
 

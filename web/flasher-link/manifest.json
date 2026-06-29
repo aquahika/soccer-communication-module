@@ -1,6 +1,6 @@
 {
-  "name": "RCJ Link Module",
-  "version": "1.0",
+  "name": "RCJ UART Link Module",
+  "version": "uartlink-v1.0",
   "new_install_prompt_erase": true,
   "flashSettings": {
     "flashMode": "dio",
@@ -11,7 +11,7 @@
     {
       "chipFamily": "ESP32-C5",
       "parts": [
-        { "path": "RCj_link_module-v1.0-merged.bin", "offset": 0 }
+        { "path": "RCj_link_module-uartlink-v1.0-merged.bin", "offset": 0 }
       ]
     }
   ]

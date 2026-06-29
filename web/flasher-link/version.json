@@ -1,12 +1,12 @@
 {
-  "version": "1.0",
+  "version": "uartlink-v1.0",
   "chip": "esp32c5",
   "chipFamily": "ESP32-C5",
-  "releaseUrl": "https://github.com/aquahika/soccer-communication-module/releases/tag/link-fw-v1.0",
+  "releaseUrl": "https://github.com/aquahika/soccer-communication-module/releases/tag/uartlink-v1.0",
   "files": {
     "merged": {
-      "size": 1004576,
-      "sha256": "d1c84deb2f7bf76886c0ceb734cd8abe5ea2455c0006bc351ba1afc402d93122"
+      "size": 1004496,
+      "sha256": "bb6012fd03790972404a9a1c8d65482c510c032cb3c19229513b51a512d30aee"
     }
   }
 }

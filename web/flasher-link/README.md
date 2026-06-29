@@ -1,4 +1,4 @@
-# RCJ Link Module — Web Flasher
+# RCJ UART Link Module — Web Flasher
 
 One-click browser flasher for the [link-module firmware](../../firmware/RCj_link_module/). It
 flashes the merged image at offset `0x0` with a full erase and resets the module — the user

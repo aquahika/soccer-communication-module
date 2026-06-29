@@ -1,4 +1,4 @@
-# RCJ Link Module — Wireless UART Bridge
+# RCJ UART Link Module — Wireless UART Bridge
 
 Firmware that turns **two** RCJ Soccer communication modules (V7 / 2026, ESP32-C5) into a
 **transparent wireless link** between two robots. Each robot connects to its module over a plain
@@ -23,7 +23,7 @@ No configuration, addresses, or apps required.
 merged binary from the
 **[Releases page](https://github.com/aquahika/soccer-communication-module/releases/latest)** —
 e.g.
-[`RCj_link_module-v1.0-merged.bin`](https://github.com/aquahika/soccer-communication-module/releases/download/link-fw-v1.0/RCj_link_module-v1.0-merged.bin).
+[`RCj_link_module-uartlink-v1.0-merged.bin`](https://github.com/aquahika/soccer-communication-module/releases/download/uartlink-v1.0/RCj_link_module-uartlink-v1.0-merged.bin).
 Then use **either** method below. Flash the **same** binary to **both** modules.
 
 > A full flash erases the module, including any saved pairing — just re-pair afterwards.
@@ -49,7 +49,7 @@ Use **desktop Chrome or Edge** (they support Web Serial) with the
 ### Alternative — command line (esptool)
 
 ```sh
-esptool --chip esp32c5 -p <PORT> --before default_reset --after hard_reset write_flash 0x0 RCj_link_module-v1.0-merged.bin
+esptool --chip esp32c5 -p <PORT> --before default_reset --after hard_reset write_flash 0x0 RCj_link_module-uartlink-v1.0-merged.bin
 ```
 
 `<PORT>` is e.g. `/dev/cu.usbmodemXXXX` (macOS), `/dev/ttyACM0` (Linux), or `COMx` (Windows).

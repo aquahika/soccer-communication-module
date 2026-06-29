@@ -39,7 +39,7 @@ int8_t display_screen_boot()
 
     display.setFont(ArialMT_Plain_10);
     display.setTextAlignment(TEXT_ALIGN_RIGHT);
-    display.drawString(128, 54, ("v " + String(FW_VERSION_MAJOR) + "." + String(FW_VERSION_MINOR)));
+    display.drawString(128, 54, FW_VERSION_STRING);
 
     display.display();
     return ESP_OK;
